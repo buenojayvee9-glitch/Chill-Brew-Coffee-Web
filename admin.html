@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h1>Admin Dashboard</h1>
+    <button onclick="history.back()">← Back</button>
+
+    <h3>All Users</h3>
+    <ul id="users"></ul>
+
+    <script>
+        let list = document.getElementById("users");
+
+        for (let key in localStorage) {
+            if (key.includes("@")) {
+                let user = JSON.parse(localStorage.getItem(key));
+                let li = document.createElement("li");
+                li.innerText = user.name + " - " + user.email + " (Points: " + user.points + ")";
+                list.appendChild(li);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
