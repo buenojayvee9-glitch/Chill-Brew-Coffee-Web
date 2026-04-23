@@ -1,227 +1,111 @@
-// ======================
-// AUTH SYSTEM (FIXED)
-// ======================
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function add(name, price) {
+    let item = cart.find(i => i.name === name);
+    if (item) item.qty++;
+    else cart.push({ name, price, qty: 1 });
+    save();
+    show();
+}
+
+function show() {
+    let list = document.getElementById("cart");
+    if (!list) return;
+
+    list.innerHTML = "";
+    let total = 0;
+
+    cart.forEach(i => {
+        total += i.price * i.qty;
+        list.innerHTML += `<li>${i.name} x${i.qty}</li>`;
+    });
+
+    document.getElementById("total").innerText = total;
+}
+
+function save() {
+    localStorage.setItem("cart", JSON.stringify(cart));
+}
 
 // SIGNUP
 function signup(e) {
     e.preventDefault();
 
-    let name = document.getElementById("name").value.trim();
-    let email = document.getElementById("email").value.trim().toLowerCase();
-    let password = document.getElementById("password").value.trim();
+    let user = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        points: 0
+    };
 
-    if (localStorage.getItem(email)) {
-        alert("Account already exists!");
-        return;
-    }
-
-    let user = { name, email, password };
-    localStorage.setItem(email, JSON.stringify(user));
-
-    alert("Account created successfully!");
-    window.location.href = "login.html";
+    localStorage.setItem(user.email, JSON.stringify(user));
+    alert("Account created!");
+    location.href = "login.html";
 }
 
-// LOGIN (FIXED)
+// LOGIN
 function login(e) {
     e.preventDefault();
 
-    let email = document.getElementById("loginEmail").value.trim().toLowerCase();
-    let password = document.getElementById("loginPassword").value.trim();
+    let email = document.getElementById("loginEmail").value;
+    let pass = document.getElementById("loginPassword").value;
 
-    let storedData = localStorage.getItem(email);
+    let user = JSON.parse(localStorage.getItem(email));
 
-    if (!storedData) {
-        alert("Account not found!");
-        return;
-    }
-
-    let user = JSON.parse(storedData);
-
-    if (user.password === password) {
-        localStorage.setItem("user", email);
-        alert("Login successful!");
-        window.location.href = "dashboard.html";
+    if (user && user.password === pass) {
+        localStorage.setItem("currentUser", email);
+        alert("Login success");
+        location.href = "menu.html";
     } else {
-        alert("Incorrect password!");
+        alert("Invalid login");
     }
 }
 
-// LOGOUT
-function logout() {
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
-}
-
-// DASHBOARD DISPLAY
-if (document.getElementById("userInfo")) {
-    let email = localStorage.getItem("user");
-
-    if (!email) {
-        window.location.href = "login.html";
-    } else {
-        let user = JSON.parse(localStorage.getItem(email));
-        document.getElementById("userInfo").innerText =
-            "Hello, " + user.name + " (" + user.email + ")";
-    }
-}
-
-// ======================
-// CART SYSTEM
-// ======================
-
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-// ADD TO CART
-function addToCart(name, price) {
-    let item = cart.find(i => i.name === name);
-
-    if (item) {
-        item.qty++;
-    } else {
-        cart.push({ name, price, qty: 1 });
-    }
-
-    saveCart();
-    displayCart();
-}
-
-// DISPLAY CART (SAFE)
-function displayCart() {
-    let cartList = document.getElementById("cartList");
-    let totalDisplay = document.getElementById("total");
-
-    if (!cartList || !totalDisplay) return;
-
-    cartList.innerHTML = "";
-    let total = 0;
-
-    cart.forEach((item, index) => {
-        total += item.price * item.qty;
-
-        let li = document.createElement("li");
-        li.innerHTML = `
-            ${item.name} x${item.qty} - ₱${item.price * item.qty}
-            <button onclick="increaseQty(${index})">+</button>
-            <button onclick="decreaseQty(${index})">-</button>
-            <button onclick="removeItem(${index})">Remove</button>
-        `;
-        cartList.appendChild(li);
-    });
-
-    totalDisplay.innerText = total;
-}
-
-// INCREASE
-function increaseQty(index) {
-    cart[index].qty++;
-    saveCart();
-    displayCart();
-}
-
-// DECREASE
-function decreaseQty(index) {
-    if (cart[index].qty > 1) {
-        cart[index].qty--;
-    } else {
-        cart.splice(index, 1);
-    }
-    saveCart();
-    displayCart();
-}
-
-// REMOVE
-function removeItem(index) {
-    cart.splice(index, 1);
-    saveCart();
-    displayCart();
-}
-
-// SAVE CART
-function saveCart() {
-    localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-// ======================
-// CHECKOUT SYSTEM
-// ======================
-
-function placeOrder() {
+// CHECKOUT
+function checkout() {
     if (cart.length === 0) {
-        alert("Cart is empty!");
+        alert("Cart empty");
         return;
     }
 
-    let paymentElement = document.getElementById("payment");
-    let payment = paymentElement ? paymentElement.value : "Cash";
+    let type = document.querySelector('input[name="type"]:checked').value;
+    let address = "", desc = "";
 
-    localStorage.setItem("receipt", JSON.stringify(cart));
-    localStorage.setItem("payment", payment);
+    if (type === "delivery") {
+        address = document.getElementById("address").value;
+        desc = document.getElementById("desc").value;
 
-    // SAVE HISTORY
-    let history = JSON.parse(localStorage.getItem("history")) || [];
-    history.push({ items: cart, payment: payment });
+        if (!address || !desc) {
+            alert("Fill delivery info");
+            return;
+        }
+    }
 
-    localStorage.setItem("history", JSON.stringify(history));
+    let total = cart.reduce((a, b) => a + b.price * b.qty, 0);
 
+    let receipt = { cart, type, address, desc, total };
+
+    localStorage.setItem("receipt", JSON.stringify(receipt));
     localStorage.removeItem("cart");
 
-    window.location.href = "receipt.html";
+    alert("Please proceed to the cashier");
+    location.href = "receipt.html";
 }
 
-// ======================
-// RECEIPT PAGE
-// ======================
+// RECEIPT
+if (document.getElementById("items")) {
+    let r = JSON.parse(localStorage.getItem("receipt"));
 
-if (document.getElementById("receiptList")) {
-    let receipt = JSON.parse(localStorage.getItem("receipt")) || [];
-    let total = 0;
-
-    let list = document.getElementById("receiptList");
-
-    receipt.forEach(item => {
-        let li = document.createElement("li");
-        li.innerText = `${item.name} x${item.qty} = ₱${item.price * item.qty}`;
-        list.appendChild(li);
-
-        total += item.price * item.qty;
+    r.cart.forEach(i => {
+        document.getElementById("items").innerHTML += `<li>${i.name} x${i.qty}</li>`;
     });
 
-    document.getElementById("receiptTotal").innerText = total;
+    document.getElementById("total").innerText = r.total;
 
-    let payment = localStorage.getItem("payment");
-    let paymentText = document.getElementById("paymentMethod");
-
-    if (paymentText) {
-        paymentText.innerText = "Payment Method: " + payment;
-    }
+    document.getElementById("info").innerText =
+        r.type === "delivery"
+            ? "Delivery to: " + r.address + " (" + r.desc + ")"
+            : "Takeout Order";
 }
 
-// ======================
-// ORDER HISTORY
-// ======================
-
-if (document.getElementById("historyList")) {
-    let history = JSON.parse(localStorage.getItem("history")) || [];
-    let list = document.getElementById("historyList");
-
-    history.forEach(order => {
-        let li = document.createElement("li");
-
-        let itemsText = order.items
-            .map(i => i.name + " x" + i.qty)
-            .join(", ");
-
-        li.innerText = itemsText + " | " + order.payment;
-
-        list.appendChild(li);
-    });
-}
-
-// ======================
-// AUTO LOAD CART
-// ======================
-
-if (document.getElementById("cartList")) {
-    displayCart();
-}
+show();
