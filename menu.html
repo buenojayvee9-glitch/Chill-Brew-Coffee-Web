@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Menu</h1>
+    </header>
+
+    <button onclick="history.back()">← Back</button>
+
+    <h2>Products</h2>
+
+    <section class="menu">
+
+        <div class="item">
+            <h3>Espresso</h3>
+            <p>₱100</p><button onclick="addToCart('Espresso',100)">Add</button>
+        </div>
+        <div class="item">
+            <h3>Latte</h3>
+            <p>₱150</p><button onclick="addToCart('Latte',150)">Add</button>
+        </div>
+        <div class="item">
+            <h3>Cappuccino</h3>
+            <p>₱120</p><button onclick="addToCart('Cappuccino',120)">Add</button>
+        </div>
+        <div class="item">
+            <h3>Mocha</h3>
+            <p>₱140</p><button onclick="addToCart('Mocha',140)">Add</button>
+        </div>
+
+        <div class="item">
+            <h3>Chocolate Cake</h3>
+            <p>₱180</p><button onclick="addToCart('Chocolate Cake',180)">Add</button>
+        </div>
+        <div class="item">
+            <h3>Cheesecake</h3>
+            <p>₱200</p><button onclick="addToCart('Cheesecake',200)">Add</button>
+        </div>
+        <div class="item">
+            <h3>Red Velvet Cake</h3>
+            <p>₱190</p><button onclick="addToCart('Red Velvet Cake',190)">Add</button>
+        </div>
+        <div class="item">
+            <h3>Blueberry Cake</h3>
+            <p>₱210</p><button onclick="addToCart('Blueberry Cake',210)">Add</button>
+        </div>
+
+    </section>
+
+    <h2>Cart</h2>
+    <ul id="cartList"></ul>
+    <p>Total: ₱<span id="total">0</span></p>
+
+    <h3>Order Type</h3>
+    <input type="radio" name="orderType" value="takeout" checked> Takeout
+    <input type="radio" name="orderType" value="delivery"> Delivery
+
+    <div id="deliveryBox" style="display:none;">
+        <input id="address" placeholder="Address">
+        <textarea id="locationDesc" placeholder="Location Description"></textarea>
+    </div>
+
+    <h3>Payment</h3>
+    <input type="radio" name="payment" value="cash" checked> Cash
+
+    <br><br>
+    <button onclick="placeOrder()">Place Order</button>
+
+    <script src="script.js"></script>
+
+    <script>
+        document.querySelectorAll('input[name="orderType"]').forEach(el => {
+            el.addEventListener('change', () => {
+                document.getElementById('deliveryBox').style.display =
+                    document.querySelector('input[name="orderType"]:checked').value === "delivery"
+                        ? "block" : "none";
+            });
+        });
+    </script>
+
+</body>
+
+</html>
