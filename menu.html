@@ -20,67 +20,89 @@
     <section class="menu">
 
         <div class="item">
+            <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348" width="100%">
             <h3>Espresso</h3>
-            <p>₱100</p><button onclick="addToCart('Espresso',100)">Add</button>
-        </div>
-        <div class="item">
-            <h3>Latte</h3>
-            <p>₱150</p><button onclick="addToCart('Latte',150)">Add</button>
-        </div>
-        <div class="item">
-            <h3>Cappuccino</h3>
-            <p>₱120</p><button onclick="addToCart('Cappuccino',120)">Add</button>
-        </div>
-        <div class="item">
-            <h3>Mocha</h3>
-            <p>₱140</p><button onclick="addToCart('Mocha',140)">Add</button>
+            <p>₱100</p>
+            <button onclick="add('Espresso',100)">Add</button>
         </div>
 
         <div class="item">
+            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93" width="100%">
+            <h3>Latte</h3>
+            <p>₱150</p>
+            <button onclick="add('Latte',150)">Add</button>
+        </div>
+
+        <div class="item">
+            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085" width="100%">
+            <h3>Cappuccino</h3>
+            <p>₱120</p>
+            <button onclick="add('Cappuccino',120)">Add</button>
+        </div>
+
+        <div class="item">
+            <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd" width="100%">
+            <h3>Mocha</h3>
+            <p>₱140</p>
+            <button onclick="add('Mocha',140)">Add</button>
+        </div>
+
+        <div class="item">
+            <img src="https://images.unsplash.com/photo-1605475128023-4a3c1c6b6c2e" width="100%">
             <h3>Chocolate Cake</h3>
-            <p>₱180</p><button onclick="addToCart('Chocolate Cake',180)">Add</button>
+            <p>₱180</p>
+            <button onclick="add('Chocolate Cake',180)">Add</button>
         </div>
+
         <div class="item">
+            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87" width="100%">
             <h3>Cheesecake</h3>
-            <p>₱200</p><button onclick="addToCart('Cheesecake',200)">Add</button>
+            <p>₱200</p>
+            <button onclick="add('Cheesecake',200)">Add</button>
         </div>
+
         <div class="item">
+            <img src="https://images.unsplash.com/photo-1601972599720-36938d4ecd31" width="100%">
             <h3>Red Velvet Cake</h3>
-            <p>₱190</p><button onclick="addToCart('Red Velvet Cake',190)">Add</button>
+            <p>₱190</p>
+            <button onclick="add('Red Velvet Cake',190)">Add</button>
         </div>
+
         <div class="item">
+            <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c" width="100%">
             <h3>Blueberry Cake</h3>
-            <p>₱210</p><button onclick="addToCart('Blueberry Cake',210)">Add</button>
+            <p>₱210</p>
+            <button onclick="add('Blueberry Cake',210)">Add</button>
         </div>
 
     </section>
 
     <h2>Cart</h2>
-    <ul id="cartList"></ul>
+    <ul id="cart"></ul>
     <p>Total: ₱<span id="total">0</span></p>
 
     <h3>Order Type</h3>
-    <input type="radio" name="orderType" value="takeout" checked> Takeout
-    <input type="radio" name="orderType" value="delivery"> Delivery
+    <input type="radio" name="type" value="takeout" checked> Takeout
+    <input type="radio" name="type" value="delivery"> Delivery
 
     <div id="deliveryBox" style="display:none;">
         <input id="address" placeholder="Address">
-        <textarea id="locationDesc" placeholder="Location Description"></textarea>
+        <textarea id="desc" placeholder="Location Description"></textarea>
     </div>
 
     <h3>Payment</h3>
     <input type="radio" name="payment" value="cash" checked> Cash
 
     <br><br>
-    <button onclick="placeOrder()">Place Order</button>
+    <button onclick="checkout()">Place Order</button>
 
     <script src="script.js"></script>
 
     <script>
-        document.querySelectorAll('input[name="orderType"]').forEach(el => {
+        document.querySelectorAll('input[name="type"]').forEach(el => {
             el.addEventListener('change', () => {
                 document.getElementById('deliveryBox').style.display =
-                    document.querySelector('input[name="orderType"]:checked').value === "delivery"
+                    document.querySelector('input[name="type"]:checked').value === "delivery"
                         ? "block" : "none";
             });
         });
